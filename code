@@ -1,0 +1,87 @@
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+class TNode {
+public:
+    char data;
+    TNode *left, *right;
+    TNode(char value){
+        data = value; 
+        left = nullptr;
+        right = nullptr;
+        }
+};
+TNode* constructTree(string postfix) {
+    stack<TNode*> s;
+    for (char ch : postfix) {
+        TNode* curr = new TNode(ch);
+        if (isalpha(ch)) {
+            s.push(curr);
+        } else {
+            TNode* right = s.top(); s.pop();
+            TNode* left = s.top(); s.pop();
+            curr->left = left;
+            curr->right = right;
+            s.push(curr);
+        }
+    }
+    return s.top();
+}
+void postorder(TNode* root) {
+    if (root == nullptr) return;
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->data;
+}
+int main() {
+    string postfix = "ab+ef*g*-";
+    TNode* root = constructTree(postfix);
+    cout << "Postorder traversal: ";
+    postorder(root); 
+    cout << endl;
+    return 0;
+}
+‎Exercise 2/tree.cpp
++47
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,47 @@
+#include <iostream>
+using namespace std;
+class TNode {
+public:
+    int data;
+    TNode* left;
+    TNode* right;
+    TNode(int value){
+        data = value;
+        left = NULL;
+        right = NULL;
+    }
+};
+int count_leaf(TNode* root) {
+    if (!root) return 0;
+    if (!root->left && !root->right) return 1;
+    return count_leaf(root->left) + count_leaf(root->right);
+}
+int count_nonleaf(TNode* root) {
+    if (!root || (!root->left && !root->right)) return 0;
+    return 1 + count_nonleaf(root->left) + count_nonleaf(root->right);
+}
+bool isleaf(TNode* root, int value) {
+    if (!root) return false;
+    if (root->data == value && !root->left && !root->right) return true;
+    return isleaf(root->left, value) || isleaf(root->right, value);
+}
+// Example usage
+int main() {
+    TNode* root = new TNode(1);
+    root->left = new TNode(2);
+    root->right = new TNode(3);
+    root->left->left = new TNode(4);
+    root->left->right = new TNode(5);
+    cout << "Leaf nodes: " << count_leaf(root) << endl;
+    cout << "Non-leaf nodes: " << count_nonleaf(root) << endl;
+    cout << "Is 4 a leaf node? " << (isleaf(root, 4) ? "Yes" : "No") << endl;
+    return 0;
+}
